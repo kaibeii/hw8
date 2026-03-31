@@ -95,6 +95,22 @@ def run_quiz(username):
         print(f"No questions found in category '{selected_category}'.")
         return
     
+    # Check if requested number exceeds available questions
+    if num_questions > len(filtered_questions):
+        print(f"\nThere are only {len(filtered_questions)} questions available in the '{selected_category}' category,")
+        print(f"but you requested {num_questions} questions.")
+        
+        while True:
+            response = input(f"\nWould you like to proceed with {len(filtered_questions)} questions? (yes/no): ").strip().lower()
+            if response in ["yes", "y"]:
+                num_questions = len(filtered_questions)
+                break
+            elif response in ["no", "n"]:
+                print("Returning to main menu.")
+                return
+            else:
+                print("Please enter 'yes' or 'no'.")
+    
     # Get user feedback to weight question selection
     user_feedback = get_question_feedback(username)
     
@@ -143,6 +159,7 @@ def view_past_performance(username):
     
     if not history:
         print("\nYou haven't taken any quizzes yet.")
+        input("Press Enter to return to the main menu...")
         return
     
     print(f"\n{'='*50}")
@@ -171,3 +188,5 @@ def view_past_performance(username):
     print(f"Overall Percentage: {overall_percentage:.1f}%")
     print(f"Quizzes Taken: {len(history)}")
     print(f"{'='*50}\n")
+    
+    input("Press Enter to return to the main menu...")

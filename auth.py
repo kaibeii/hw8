@@ -46,8 +46,23 @@ def create_account():
             continue
             
         if username_exists(username):
-            print(f"The username '{username}' is already taken. Please choose a different one.")
-            continue
+            print(f"\nThe username '{username}' is already taken.")
+            print("What would you like to do?")
+            print("1. Choose a different username")
+            print("2. Log in with that username")
+            print("3. Return to startup screen")
+            
+            choice = input("\nEnter your choice (1, 2, or 3): ").strip()
+            
+            if choice == "1":
+                continue
+            elif choice == "2":
+                return login()
+            elif choice == "3":
+                return startup_screen()
+            else:
+                print("Invalid choice. Please enter 1, 2, or 3.")
+                continue
         
         break
     

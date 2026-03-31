@@ -90,7 +90,7 @@ def filter_questions_by_category(questions, category):
 
 def select_random_questions(questions, num_questions, user_feedback):
     """
-    Select random questions, preferring liked questions and avoiding disliked ones.
+    Select random questions without repetition, preferring liked questions and avoiding disliked ones.
     
     Args:
         questions: List of all available questions
@@ -98,9 +98,9 @@ def select_random_questions(questions, num_questions, user_feedback):
         user_feedback: Dictionary of question_index -> 'like'/'dislike'/'neutral'
     
     Returns:
-        List of selected questions
+        Tuple of (List of selected questions, actual number selected)
     """
-    # Adjust availability based on feedback
+    # Build weighted list
     available = []
     weights = []
     
@@ -117,15 +117,37 @@ def select_random_questions(questions, num_questions, user_feedback):
         
         available.append(q)
     
-    # Handle case where more questions are requested than available
-    if num_questions > len(available):
-        print(f"Only {len(available)} questions available in the chosen category.")
-        num_questions = len(available)
+    # Cap to available questions (should be handled by caller, but safety check)
+    num_questions = min(num_questions, len(available))
     
-    # Select questions using weighted random selection
-    selected = random.choices(available, weights=weights, k=num_questions)
+    # Select questions using weighted random sampling without replacement
+    selected = _weighted_sample_without_replacement(available, weights, num_questions)
     
     return selected, num_questions
+
+
+def _weighted_sample_without_replacement(population, weights, k):
+    """
+    Select k items from population without replacement, using weights.
+    Items with higher weights are more likely to be selected, but no item appears twice.
+    """
+    if k > len(population):
+        k = len(population)
+    
+    selected = []
+    remaining_indices = list(range(len(population)))
+    remaining_weights = list(weights)
+    
+    for _ in range(k):
+        # Select one index based on weights from remaining items
+        chosen_position = random.choices(range(len(remaining_indices)), weights=remaining_weights, k=1)[0]
+        # Get the actual population item and add to selected
+        selected.append(population[remaining_indices[chosen_position]])
+        # Remove from remaining pool
+        remaining_indices.pop(chosen_position)
+        remaining_weights.pop(chosen_position)
+    
+    return selected
 
 
 def normalize_answer(answer, question_type):
