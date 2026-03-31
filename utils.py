@@ -10,7 +10,7 @@ import os
 
 def load_questions():
     """
-    Load questions from questions.json.
+    Load questions from questions.json and validate structure.
     Raises an error if the file is missing or invalid.
     """
     if not os.path.exists("questions.json"):
@@ -20,13 +20,56 @@ def load_questions():
     try:
         with open("questions.json", "r") as f:
             data = json.load(f)
-        return data.get("questions", [])
+        questions = data.get("questions", [])
+        
+        # Validate question structure
+        _validate_questions(questions)
+        return questions
     except json.JSONDecodeError:
         print("Error: The file 'questions.json' is unreadable and must be fixed.")
+        exit(1)
+    except ValueError as e:
+        print(f"Error: Invalid question structure - {e}")
         exit(1)
     except Exception as e:
         print(f"Error loading questions: {e}")
         exit(1)
+
+
+def _validate_questions(questions):
+    """
+    Validate that all questions have required fields based on their type.
+    Raises ValueError if validation fails.
+    """
+    required_fields = {"question", "type", "answer"}
+    type_specific_fields = {
+        "multiple_choice": {"options"},
+        "true_false": set(),
+        "short_answer": set()
+    }
+    
+    for idx, q in enumerate(questions):
+        if not isinstance(q, dict):
+            raise ValueError(f"Question {idx}: must be a dictionary")
+        
+        # Check required fields
+        missing = required_fields - set(q.keys())
+        if missing:
+            raise ValueError(f"Question {idx}: missing fields {missing}")
+        
+        # Check question type is valid
+        q_type = q.get("type")
+        if q_type not in type_specific_fields:
+            raise ValueError(f"Question {idx}: invalid type '{q_type}'")
+        
+        # Check type-specific fields
+        if q_type == "multiple_choice":
+            if "options" not in q:
+                raise ValueError(f"Question {idx}: multiple_choice missing 'options' field")
+            if not isinstance(q["options"], list) or len(q["options"]) < 2:
+                raise ValueError(f"Question {idx}: 'options' must be a list with at least 2 items")
+            if q["answer"] not in q["options"]:
+                raise ValueError(f"Question {idx}: answer '{q['answer']}' not in options")
 
 
 def get_categories(questions):

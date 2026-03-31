@@ -1,17 +1,31 @@
 """
 Authentication module for user account creation and login.
-Handles password hashing and verification.
+Handles password hashing with salt and verification.
 """
 
 import hashlib
-import os
-import pickle
+import secrets
 from storage import load_users, save_users
 
 
 def hash_password(password):
-    """Hash a password using SHA-256."""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash a password using SHA-256 with a random salt."""
+    # Generate a random salt (16 bytes = 128 bits)
+    salt = secrets.token_hex(16)
+    # Hash the password with the salt
+    hashed = hashlib.sha256((salt + password).encode()).hexdigest()
+    # Return salt:hash for storage
+    return f"{salt}${hashed}"
+
+
+def verify_password(password, stored_hash):
+    """Verify a password against a stored hash."""
+    try:
+        salt, hashed = stored_hash.split('$')
+        return hashed == hashlib.sha256((salt + password).encode()).hexdigest()
+    except ValueError:
+        # Handle old format without salt (for backwards compatibility)
+        return hashlib.sha256(password.encode()).hexdigest() == stored_hash
 
 
 def username_exists(username):
@@ -37,7 +51,12 @@ def create_account():
         
         break
     
-    password = input("Choose a password: ").strip()
+    while True:
+        password = input("Choose a password (minimum 6 characters): ").strip()
+        if len(password) < 6:
+            print("Password must be at least 6 characters long. Please try again.")
+            continue
+        break
     
     # Store the account
     users = load_users()
@@ -61,7 +80,7 @@ def login():
         print("Invalid username or password.")
         return None
     
-    if users[username] != hash_password(password):
+    if not verify_password(password, users[username]):
         print("Invalid username or password.")
         return None
     

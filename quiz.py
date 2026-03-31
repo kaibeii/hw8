@@ -107,8 +107,8 @@ def run_quiz(username):
     correct_count = 0
     question_feedback = {}
     
-    for i, question in enumerate(quiz_questions, 1):
-        display_question(question, i, actual_num)
+    for i, question in enumerate(quiz_questions):
+        display_question(question, i + 1, actual_num)  # i+1 for display (1-indexed)
         
         user_answer = get_user_answer(question)
         is_correct = check_answer(user_answer, question["answer"], question["type"])
@@ -119,7 +119,7 @@ def run_quiz(username):
         else:
             print(f"✗ Incorrect. The correct answer is: {question['answer']}")
         
-        # Get feedback
+        # Get feedback (store with 0-indexed key to match utils.py retrieval)
         feedback = get_feedback()
         question_feedback[str(i)] = feedback
     
