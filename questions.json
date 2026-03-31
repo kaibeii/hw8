@@ -1,0 +1,68 @@
+{
+  "questions": [
+    {
+      "question": "What keyword is used to define a function in Python?",
+      "type": "multiple_choice",
+      "options": ["func", "define", "def", "function"],
+      "answer": "def",
+      "category": "Python Basics"
+    },
+    {
+      "question": "A list in Python is immutable.",
+      "type": "true_false",
+      "answer": "false",
+      "category": "Data Structures"
+    },
+    {
+      "question": "What built-in function returns the number of items in a list?",
+      "type": "short_answer",
+      "answer": "len",
+      "category": "Python Basics"
+    },
+    {
+      "question": "Which data type stores key-value pairs in Python?",
+      "type": "multiple_choice",
+      "options": ["tuple", "dictionary", "set", "string"],
+      "answer": "dictionary",
+      "category": "Data Structures"
+    },
+    {
+      "question": "The expression 3 == 3.0 evaluates to True in Python.",
+      "type": "true_false",
+      "answer": "true",
+      "category": "Operators"
+    },
+    {
+      "question": "What is the correct way to create an empty list in Python?",
+      "type": "multiple_choice",
+      "options": ["()", "[]", "{}", "list()"],
+      "answer": "[]",
+      "category": "Data Structures"
+    },
+    {
+      "question": "In Python, strings are mutable.",
+      "type": "true_false",
+      "answer": "false",
+      "category": "Data Structures"
+    },
+    {
+      "question": "What method adds an element to the end of a list?",
+      "type": "short_answer",
+      "answer": "append",
+      "category": "Python Basics"
+    },
+    {
+      "question": "Which operator is used for exponentiation in Python?",
+      "type": "multiple_choice",
+      "options": ["^", "**", "^", "pow"],
+      "answer": "**",
+      "category": "Operators"
+    },
+    {
+      "question": "A tuple in Python can be modified after creation.",
+      "type": "true_false",
+      "answer": "false",
+      "category": "Data Structures"
+    }
+  ]
+}
